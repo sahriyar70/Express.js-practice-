@@ -50,15 +50,32 @@ app.get('/', (req : Request, res : Response) => {
   res.send('Hello World!')
 })
 
-app.post("/",(req : Request, res : Response)=>{
-    console.log(req.body )
+app.post("/users", async (req: Request, res: Response) => {
+    const { name, email } = req.body;
 
-    res.status(200).json({
-        success : true,
-        message : " api hit "
+    try {
+        const result = await pool.query(
+            `INSERT INTO users(name, email) VALUES ($1, $2) RETURNING *`,
+            [name, email]
+        );
 
-    })
-})
+        console.log(result);
+
+        return res.status(201).json({
+            success: true,
+            message: "Data inserted",
+            data: result.rows[0]
+        });
+
+    } catch (err: any) {
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
