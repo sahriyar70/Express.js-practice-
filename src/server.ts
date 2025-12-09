@@ -228,13 +228,41 @@ app.get('/todos', async(req : Request, res : Response ) =>{
     }
 });
 
+app.put('/todos/:id', async (req : Request, res : Response)=>{
+    const {title,user_id} = req.body;
+
+    try {
+        const result = await pool.query(`
+          UPDATE todos SET title = $1, user_id =$2  WHERE id = $3 RETURNING *  
+            `,[title,user_id, req.params.id])
+
+            res.status(200).json({
+                    success : true,
+                    message : "data found",
+                    data : result.rows[0] }) }
+        
+     catch (error : any) {
+        res.status(500).json({
+            success : false,
+            message : " not update todo"
+        })
+    }
+})
+
+
+
+
+
+//erro route
 app.use((req : Request, res : Response)=>{
     res.status(404).json({
         success:false,
         message : "Rout not foun",
         path : req.path 
     })
-})
+});
+
+
 
 
 app.listen(port, () => {
