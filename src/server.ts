@@ -4,6 +4,7 @@ import config from "./config";
 import initDB, { pool } from "./config/db";
 import logger from "./medillewar/logger";
 import { userRouts } from "./modules/users/user.routes";
+import { authRoute } from "./modules/auth/auth.routes";
 
 
 
@@ -19,7 +20,9 @@ app.get('/', logger, (req : Request, res : Response) => {
   res.send('Hello World!')
 })
 // user CRUD 
-app.use('/users',userRouts)
+app.use('/users',userRouts);
+
+app.use('/auth',authRoute)
 
 
 
